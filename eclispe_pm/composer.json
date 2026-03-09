@@ -1,0 +1,13 @@
+{
+  "name": "robertja98/eclispe-pm",
+  "description": "Eclipse PM API (JSON-first) with stateful Zim-X sessions",
+  "type": "project",
+  "require": {
+    "php": ">=8.1"
+  },
+  "autoload": {
+    "psr-4": {
+      "App\\": "app/"
+    }
+  }
+}

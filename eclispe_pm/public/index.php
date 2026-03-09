@@ -1,21 +1,31 @@
 <?php
 declare(strict_types=1);
 
+use App\Support\Response;
+use App\Http\Controllers\HealthController;
+use App\Http\Controllers\ProjectController;
+use App\Infrastructure\Persistence\Repositories\InMemoryProjectRepository;
+
+require __DIR__ . '/../vendor/autoload.php';
+
 session_start();
 
 $path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/';
+$method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 
-if ($path === '/' || $path === '/health') {
-    header('Content-Type: application/json; charset=utf-8');
-    echo json_encode([
-        'ok' => true,
-        'message' => 'eclispe_pm is running',
-        'date_utc' => gmdate('c'),
-        'php_session_id' => session_id(),
-    ], JSON_PRETTY_PRINT);
+if ($method === 'GET' && ($path === '/' || $path === '/health')) {
+    (new HealthController())->handle();
     exit;
 }
 
-http_response_code(404);
-header('Content-Type: application/json; charset=utf-8');
-echo json_encode(['ok' => false, 'error' => 'Not Found', 'path' => $path], JSON_PRETTY_PRINT);
+if ($method === 'GET' && $path === '/api/projects') {
+    $repo = new InMemoryProjectRepository();
+    (new ProjectController($repo))->index();
+    exit;
+}
+
+Response::json([
+    'ok' => false,
+    'error' => 'Not Found',
+    'path' => $path,
+], 404);

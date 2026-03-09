@@ -1,0 +1,2 @@
+<?php
+// zimx.php config

@@ -1,0 +1,2 @@
+<?php
+// ZimXClient.php
